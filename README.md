@@ -1,4 +1,4 @@
-# Lab exercises for DRF course - 20PF EV3 - Semester 9
+# Lab exercises for DRF course - 20PFIEV3 - Semester 9
 ## Student Info:
 Name: Dao Hoai Linh
 Student ID: 123200107
