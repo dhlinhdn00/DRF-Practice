@@ -1,0 +1,25 @@
+{% for x, y in points %}
+    There is a point at {{ x }},{{ y }}
+{% endfor %}
+
+{% for key, value in data.items %}
+    {{ key }}: {{ value }}
+{% endfor %}
+
+<ul>
+    {% for athlete in athlete_list %}
+        <li>{{ athlete.name }}</li>
+    {% empty %}
+        <li>Sorry, no athletes in this list.</li>
+    {% endfor %}
+    </ul>
+
+    <ul>
+        {% if athlete_list %}
+          {% for athlete in athlete_list %}
+            <li>{{ athlete.name }}</li>
+          {% endfor %}
+        {% else %}
+          <li>Sorry, no athletes in this list.</li>
+        {% endif %}
+      </ul>

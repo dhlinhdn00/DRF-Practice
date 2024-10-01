@@ -1,0 +1,16 @@
+{% if somevar is True %}
+  This appears if and only if somevar is True.
+{% endif %}
+
+{% if somevar is None %}
+  This appears if somevar is None, or if somevar is not found in the context.
+{% endif %}
+
+{% if somevar is not True %}
+  This appears if somevar is not True, or if somevar is not found in the
+  context.
+{% endif %}
+
+{% if somevar is not None %}
+  This appears if and only if somevar is not None.
+{% endif %}
