@@ -160,7 +160,6 @@ polls/
       path("admin/", admin.site.urls),
   ]
  ```
-  
 - The include() func allows referencing other URLconfs.
   - The path("polls/", include("polls.urls")) tells Django: "Whenever the URL starts with polls/, look for more URL patterns in the polls app's urls.py file."
   - Inside the polls/urls.py, you can define the specific endpoints for the polls app (e.g., polls/vote, polls/results), and include() will forward the requests to those URLs.
@@ -168,7 +167,6 @@ polls/
 
 - The path() func expects at least 2 arguments: route and view.
   - For example, route: admin/ and poll/ are respect to apps. And view is the class or func handling request of URL that you defined in route.
-  
   
 - All of the above processing has ensured we have wired an index view into the URLconf! Check it by command:
   ```bash
