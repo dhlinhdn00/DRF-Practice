@@ -395,3 +395,167 @@ In this part, we learned how to:
 - Organize URL patterns to match different views.
 
 By now, we should be able to navigate through the list of questions and view each one’s details.
+
+## Part_4: 
+
+In this part, we will process form submissions and utilize Django’s generic views for better code efficiency.
+
+---
+
+### Step 1. Update the Poll Detail Template with a Form
+
+- We will update the `polls/detail.html` file to include a form that allows users to vote on a poll.
+
+#### File: `polls/templates/polls/detail.html`
+
+```html
+<form action="{% url 'polls:vote' question.id %}" method="post">
+{% csrf_token %}
+<fieldset>
+    <legend><h1>{{ question.question_text }}</h1></legend>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    {% for choice in question.choice_set.all %}
+        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+    {% endfor %}
+</fieldset>
+<input type="submit" value="Vote">
+</form>
+```
+
+- The form allows the user to submit a vote. Each choice is displayed as a radio button with a label, and the form submits the choice ID via a POST request.
+
+---
+
+### Step 2. Implement Form Handling Logic in the View
+
+- Now, we will write the logic for handling the form submission in the `vote` view.
+
+#### File: `polls/views.py`
+
+```python
+from django.db.models import F
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
+
+from .models import Choice, Question
+
+def vote(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    try:
+        selected_choice = question.choice_set.get(pk=request.POST['choice'])
+    except (KeyError, Choice.DoesNotExist):
+        return render(request, 'polls/detail.html', {
+            'question': question,
+            'error_message': "You didn't select a choice.",
+        })
+    else:
+        selected_choice.votes = F('votes') + 1
+        selected_choice.save()
+        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+```
+
+- This view handles the form data submitted by the user. If the user doesn’t select a choice, it redisplays the form with an error message. If a choice is selected, the vote count is updated and the user is redirected to the results page.
+
+---
+
+### Step 3. Create the Results View and Template
+
+- Once a vote is submitted, we need to display the results. Create a new view and a results template.
+
+#### File: `polls/views.py`
+
+```python
+from django.shortcuts import get_object_or_404, render
+
+def results(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, 'polls/results.html', {'question': question})
+```
+
+#### File: `polls/templates/polls/results.html`
+
+```html
+<h1>{{ question.question_text }}</h1>
+<ul>
+{% for choice in question.choice_set.all %}
+    <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+{% endfor %}
+</ul>
+<a href="{% url 'polls:detail' question.id %}">Vote again?</a>
+```
+
+- The results page will show the total number of votes for each choice, using the `pluralize` filter to correctly format "vote" as singular or plural.
+
+---
+
+### Step 4. Optimize with Generic Views
+
+- To reduce redundancy in our code, we will use Django's **generic views**.
+
+#### File: `polls/urls.py`
+
+```python
+from django.urls import path
+
+from . import views
+
+app_name = 'polls'
+urlpatterns = [
+    path('', views.IndexView.as_view(), name='index'),
+    path('<int:pk>/', views.DetailView.as_view(), name='detail'),
+    path('<int:pk>/results/', views.ResultsView.as_view(), name='results'),
+    path('<int:question_id>/vote/', views.vote, name='vote'),
+]
+```
+
+- Here, we replaced the old views with `IndexView`, `DetailView`, and `ResultsView` for simplicity.
+
+#### File: `polls/views.py`
+
+```python
+from django.views import generic
+
+from .models import Question
+
+class IndexView(generic.ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'latest_question_list'
+
+    def get_queryset(self):
+        return Question.objects.order_by('-pub_date')[:5]
+
+class DetailView(generic.DetailView):
+    model = Question
+    template_name = 'polls/detail.html'
+
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = 'polls/results.html'
+```
+
+- `ListView` and `DetailView` are used to display the list of questions and the details for each question, respectively.
+
+---
+
+### Step 5. Test the Implementation
+
+- After making these changes, restart the Django development server and test the application.
+
+```bash
+python manage.py runserver
+```
+
+- Open your browser and go to `/polls/` to see the list of polls. Select a poll, vote, and view the results.
+
+- After successful voting, the result page will display the number of votes for each choice.
+
+![Part 4 Result 1](./__ProcessImage/Part4Result1.png)
+![Part 4 Result 2](./__ProcessImage/Part4Result2.png)
+
+---
+
+### Summary:
+
+Now we processed form data and introduced generic views to make our Django app more efficient.
