@@ -139,6 +139,7 @@ polls/
   ```
 
 - Access `http://localhost:8000/polls/` to see the result.
+- ![My Result in Step5](./__ProcessImage/Step5.png)
 
 ---
 
