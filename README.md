@@ -305,8 +305,10 @@ This tutorial begins where Part 1 left off. We’ll set up the database, create 
 - Open your browser and navigate to `http://127.0.0.1:8000/admin/`.
 - Log in using the superuser credentials (`hoailinh`, `meow@2024`), and you will see the `Question` model registered in the admin site.
 
-- Here’s the result in my browser:
+- Here’s the result in my browser and add new question:
 - ![My Result in Part 2](./__ProcessImage/Part2Result.png)
+
+- ![My Result in Part 2](./__ProcessImage/Part2AddNewQuestion.png)
 
 ---
 
