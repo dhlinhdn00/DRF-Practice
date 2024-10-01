@@ -400,7 +400,7 @@ In this part, we learned how to:
 
 By now, we should be able to navigate through the list of questions and view each one’s details.
 
-## Part_4: 
+## Part_4
 
 In this part, we will process form submissions and utilize Django’s generic views for better code efficiency.
 
@@ -821,3 +821,100 @@ Destroying test database for alias 'default'...
 ### Summary
 
 In this part of the tutorial, we learned how to write tests for our Django application, identify bugs, and fix them through test-driven development. We also ensured that our app displays only the relevant questions by filtering out future questions.
+
+## Part_6
+
+In this part, we will learn how to add static files (like CSS and images) to the polls app to customize the look and feel.
+
+---
+
+### Step 1: Create the `static` directory
+
+First, create a directory called `static` inside your `polls` directory. Django will automatically look for static files here, similar to how it finds templates inside `polls/templates/`.
+
+- Use the command:
+  ```bash
+  mkdir polls/static/polls
+  ```
+
+### Step 2: Add `style.css`
+
+Inside the `static/polls` directory, create a file called `style.css` that will contain the styles for your page.
+
+- Use the command:
+  ```bash
+  touch polls/static/polls/style.css
+  ```
+
+Now, add the following CSS code to `style.css`:
+```css
+li a {
+    color: green;
+}
+```
+
+This will change the color of your question links to green.
+
+### Step 3: Load the static file in `index.html`
+
+Open the `polls/templates/polls/index.html` file and add the following lines at the top to load your static CSS file:
+```django
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'polls/style.css' %}">
+```
+
+- **Explanation**: `{% load static %}` tells Django that you will be using static files in the template, and `{% static %}` generates the absolute URL for your static files.
+
+### Step 4: Run the server and check the result
+
+Now, restart your server using:
+```bash
+python manage.py runserver
+```
+
+Then, go back to `http://localhost:8000/polls/`. You should now see that the question links have turned **green**.
+
+![Part6Result1](./__ProcessImage/Part6Result1.png)
+
+### Step 5: Adding a background image
+
+Create an `images` subdirectory inside `polls/static/polls/`, and add any image you want to use as the background. For this tutorial, let’s use a file named `background.png`.
+
+- Use the command:
+  ```bash
+  mkdir polls/static/polls/images
+  ```
+
+Place the image file `background.png` inside this folder.
+
+Now, add the following code to `polls/static/polls/style.css`:
+```css
+body {
+    background: white url("images/background.png") no-repeat;
+}
+```
+
+- **Explanation**: `url("images/background.png")` is a relative path to the background image.
+
+### Step 6: Check the background image
+
+Reload the page at `http://localhost:8000/polls/`, and you should see the background image appear in the top-left corner of the screen.
+
+![Part6Result2](./__ProcessImage/Part6Result2.png)
+
+---
+
+### Note:
+- **{% static %} cannot be used inside static files**, such as your CSS files. Therefore, always use relative paths to link your static files to one another. This way, if you change `STATIC_URL`, you don’t need to modify all the paths in your static files.
+
+---
+
+### Summary:
+
+In this part of the tutorial, you learned how to add static files to your Django project and load these files (such as CSS and images) into your webpages.
+
+---
+
+This concludes **Part 6** of the Django tutorial.
+
