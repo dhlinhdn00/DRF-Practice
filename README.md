@@ -38,10 +38,7 @@ LinhSite/
         wsgi.py
 ```
 
-#### Explanation of main files and folders:
-
-We talk about each file:
-
+Ok, we will talk about each file:
 - The **Outer `LinhSite/`**: A container for the entire project. You can rename it.
 - The **`manage.py`**: A command-line utility that lets you interact with Django in various ways. (Read more at [django-admin](https://docs.djangoproject.com/en/5.1/ref/django-admin/)). (It's still pretty vague at the moment :v, but I know it's very important to the project.)
 - The **Inner `LinhSite/`**: The actual Python package for your project, used to import components (e.g., `LinhSite.urls`).
@@ -71,7 +68,6 @@ We talk about each file:
 - Result in the browser: Access `http://127.0.0.1:8000/`.
 - ![My Result in Step2](./__ProcessImage/Step2.png)
 
-
 #### Output:
 ```plaintext
 You have 18 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): admin, auth, contenttypes, sessions.
@@ -91,10 +87,9 @@ You have 18 unapplied migration(s). Your project may not work properly until you
   python manage.py startapp polls
   ```
 
-#### Difference between a **project** and an **app**:
+Knowledge:
 
-- **Project**: A collection of configurations and apps for a specific website. A project can contain multiple apps.
-- **App**: A web application that performs a specific task, such as a blog, a poll app, etc.
+- What’s the difference between a project and an app? An app is a web application that does something – e.g., a blog system, a database of public records or a small poll app. A project is a collection of configuration and apps for a particular website. A project can contain multiple apps. An app can be in multiple projects.
 
 #### App structure for **polls**:
 ```plaintext
@@ -152,4 +147,4 @@ polls/
 ---
 
 ### Summary:
-In this part of the tutorial, we created a basic Django project, set up a polls app, and configured views and URLs to display the index page. All the notes and personal comments have been preserved as they were intended.
+In this part of the tutorial, we created a basic Django project, set up a polls app, and configured views and URLs to display the index page.
