@@ -879,7 +879,7 @@ Then, go back to `http://localhost:8000/polls/`. You should now see that the que
 
 ### Step 5: Adding a background image
 
-Create an `images` subdirectory inside `polls/static/polls/`, and add any image you want to use as the background. For this tutorial, let’s use a file named `background.png`.
+Create an `images` subdirectory inside `polls/static/polls/`, and add any image you want to use as the background. For this tutorial, let’s use a file named `background.jpg`.
 
 - Use the command:
   ```bash
@@ -891,11 +891,11 @@ Place the image file `background.png` inside this folder.
 Now, add the following code to `polls/static/polls/style.css`:
 ```css
 body {
-    background: white url("images/background.png") no-repeat;
+    background: white url("images/background.jpg") no-repeat;
 }
 ```
 
-- **Explanation**: `url("images/background.png")` is a relative path to the background image.
+- **Explanation**: `url("images/background.jpg")` is a relative path to the background image.
 
 ### Step 6: Check the background image
 
@@ -918,3 +918,179 @@ In this part of the tutorial, you learned how to add static files to your Django
 
 This concludes **Part 6** of the Django tutorial.
 
+
+## Part 7
+
+### Step 1: Customizing Admin Forms
+
+Django's admin interface allows easy customizations to the forms, field orders, and other options for better usability.
+
+#### 1.1 Reordering Fields in the Admin
+
+Replace the default `admin.site.register(Question)` call with the following to control the order of fields in the form:
+
+```python
+# LinhSite/polls/admin.py
+from django.contrib import admin
+from .models import Question
+
+class QuestionAdmin(admin.ModelAdmin):
+    fields = ["pub_date", "question_text"]
+
+admin.site.register(Question, QuestionAdmin)
+```
+
+This code rearranges the fields, making "Publication date" appear before the "Question" field. It’s particularly useful when there are more fields involved.
+
+#### 1.2 Adding Fieldsets for Better Organization
+
+Next, split the fields into more intuitive fieldsets. For instance:
+
+```python
+# LinhSite/polls/admin.py
+from django.contrib import admin
+from .models import Question
+
+class QuestionAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['question_text']}),
+        ('Date information', {'fields': ['pub_date']}),
+    ]
+
+admin.site.register(Question, QuestionAdmin)
+```
+
+This organizes the form into distinct sections for better readability.
+
+### Step 2: Adding Related Objects
+
+To add related objects such as `Choice` inline with the `Question` model, use inlines.
+
+#### 2.1 Registering the Inline Choices
+
+Instead of registering the `Choice` model separately, link it as an inline model in `QuestionAdmin`:
+
+```python
+# LinhSite/polls/admin.py
+from django.contrib import admin
+from .models import Choice, Question
+
+class ChoiceInline(admin.StackedInline):
+    model = Choice
+    extra = 3
+
+class QuestionAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['question_text']}),
+        ('Date information', {'fields': ['pub_date'], 'classes': ['collapse']}),
+    ]
+    inlines = [ChoiceInline]
+
+admin.site.register(Question, QuestionAdmin)
+```
+
+This allows you to edit `Choice` objects directly within the `Question` form.
+
+#### 2.2 Tabular Display for Inlines
+
+To save space, we can display `Choice` objects in a more compact, tabular form:
+
+```python
+# LinhSite/polls/admin.py
+class ChoiceInline(admin.TabularInline):
+    model = Choice
+    extra = 3
+```
+
+The tabular layout uses less space, making it more efficient for editing multiple related items.
+
+### Step 3: Customizing the Admin Change List
+
+#### 3.1 Displaying Custom Fields in the List
+
+To customize the columns in the change list, use `list_display` in `QuestionAdmin`:
+
+```python
+# LinhSite/polls/admin.py
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ['question_text', 'pub_date', 'was_published_recently']
+```
+
+This adds the `was_published_recently` method to the list and makes it sortable.
+
+#### 3.2 Adding Filters and Search
+
+You can add filtering options and a search bar to the admin:
+
+```python
+# LinhSite/polls/admin.py
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ['question_text', 'pub_date', 'was_published_recently']
+    list_filter = ['pub_date']
+    search_fields = ['question_text']
+```
+
+This adds a filter by publication date and a search box for `question_text`.
+
+### Step 4: Customizing the Admin Look and Feel
+
+#### 4.1 Customizing the Admin Header
+
+To modify the header of the admin page, create a custom `base_site.html` template. First, configure your templates directory in `LinhSite/settings.py`:
+
+```python
+# LinhSite/settings.py
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+```
+
+Next, create the following directory structure and copy the `base_site.html` template:
+
+```
+LinhSite/templates/admin/base_site.html
+```
+
+Replace the default text in `base_site.html` to customize the header:
+
+```html
+{% block branding %}
+<div id="site-name"><a href="{% url 'admin:index' %}">LinhSite Administration</a></div>
+{% endblock %}
+```
+
+This will display “LinhSite Administration” instead of “Django administration.”
+
+### Step 5: Customizing the Admin Index Page
+
+To customize the index page of the admin, copy the `index.html` from Django's admin directory into your custom templates directory:
+
+```
+LinhSite/templates/admin/index.html
+```
+
+Modify this file to arrange or customize the apps listed on the index page.
+
+---
+
+### Result
+
+The final customized admin should look like the image below:
+
+![Part7Result](./__ProcessImage/Part7Result.png)
+
+### Summary
+
+In Part 7, we customized the Django Admin interface by adjusting form layouts with QuestionAdmin and fieldsets, adding related Choice objects directly on the Question admin page using inlines, and enhancing the admin change list with list_display, list_filter, and search_fields for better usability. We also customized the admin's look and feel by overriding templates and modifying the branding. These changes improved the efficiency and appearance of the admin interface for managing models.
