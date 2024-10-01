@@ -3,6 +3,10 @@
 
 ## Part_1
 
+Consist of two parts:
+- A public site that lets people view polls and vote in them.
+- An admin site that lets you add, and delete polls.
+
 ### Step 0.1. Check version (no need):
 ```bash
 python -m django --version
