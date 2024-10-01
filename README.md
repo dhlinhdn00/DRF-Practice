@@ -23,7 +23,7 @@ conda activate ./env
   django-admin startproject mysite
   ```
 
-- "mysite" is the name you give. For example, I named my project **LinhSite**.
+- "mysite" is the name we give. For example, I named my project **LinhSite**.
 
 #### Project structure after creation:
 
@@ -40,9 +40,11 @@ LinhSite/
 
 #### Explanation of main files and folders:
 
-- **Outer `LinhSite/`**: A container for the entire project. You can rename it.
-- **`manage.py`**: A command-line utility that lets you interact with Django in various ways. (Read more at [django-admin](https://docs.djangoproject.com/en/5.1/ref/django-admin/)).
-- **Inner `LinhSite/`**: The actual Python package for your project, used to import components (e.g., `LinhSite.urls`).
+We talk about each file:
+
+- The **Outer `LinhSite/`**: A container for the entire project. You can rename it.
+- The **`manage.py`**: A command-line utility that lets you interact with Django in various ways. (Read more at [django-admin](https://docs.djangoproject.com/en/5.1/ref/django-admin/)). (It's still pretty vague at the moment :v, but I know it's very important to the project.)
+- The **Inner `LinhSite/`**: The actual Python package for your project, used to import components (e.g., `LinhSite.urls`).
 
 #### Specific files:
 - **`__init__.py`**: An empty file that tells Python this directory should be considered a package.
@@ -50,6 +52,12 @@ LinhSite/
 - **`urls.py`**: The URL declarations for the project (similar to a table of contents for your site). (Read more at [Django URLs](https://docs.djangoproject.com/en/5.1/topics/http/urls/)).
 - **`asgi.py`**: The entry-point for ASGI-compatible web servers to serve your project, handling asynchronous tasks. (Read more about [ASGI](https://docs.djangoproject.com/en/5.1/howto/deployment/asgi/)).
 - **`wsgi.py`**: The entry-point for WSGI-compatible web servers to serve your project, handling synchronous tasks. (Read more about [WSGI](https://docs.djangoproject.com/en/5.1/howto/deployment/wsgi/)).
+
+#### Additional information on WSGI and ASGI:
+
+- **WSGI (Web Server Gateway Interface)**: A standard interface for web servers and web applications, designed for synchronous tasks. WSGI processes one HTTP request at a time, making it ideal for traditional web frameworks like Django and Flask.
+
+- **ASGI (Asynchronous Server Gateway Interface)**: A newer standard supporting both synchronous and asynchronous applications. ASGI allows handling of multiple tasks concurrently, such as WebSocket connections or asynchronous HTTP requests, making it ideal for real-time applications.
 
 ---
 
@@ -144,4 +152,4 @@ polls/
 ---
 
 ### Summary:
-In this part of the tutorial, we created a basic Django project, set up a polls app, and configured views and URLs to display the index page.
+In this part of the tutorial, we created a basic Django project, set up a polls app, and configured views and URLs to display the index page. All the notes and personal comments have been preserved as they were intended.
