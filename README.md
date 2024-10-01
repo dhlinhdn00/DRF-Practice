@@ -312,3 +312,86 @@ This tutorial begins where Part 1 left off. We’ll set up the database, create 
 
 ### Summary:
 In Part 2, we set up the database, created the models, activated them, and registered them in the Django admin site. We also learned how to create migrations and run them to apply model changes.
+
+## Part_3
+
+In this part, we are extending the polls app by adding more views and using Django's template system to render the data in a more structured way.
+
+### Step 1. Write more views
+
+We will add three new views in `polls/views.py`. These views will display details about specific questions and handle voting functionality. Modify the file to look like this:
+
+```python
+from django.http import HttpResponse
+
+def detail(request, question_id):
+    return HttpResponse("You're looking at question %s." % question_id)
+
+def results(request, question_id):
+    response = "You're looking at the results of question %s."
+    return HttpResponse(response % question_id)
+
+def vote(request, question_id):
+    return HttpResponse("You're voting on question %s." % question_id)
+```
+
+### Step 2. Map the new views
+
+Next, we need to wire these views to URLs in `polls/urls.py`. Add the following paths:
+
+```python
+from django.urls import path
+from . import views
+
+app_name = "polls"
+urlpatterns = [
+    path("", views.index, name="index"),
+    path("<int:question_id>/", views.detail, name="detail"),
+    path("<int:question_id>/results/", views.results, name="results"),
+    path("<int:question_id>/vote/", views.vote, name="vote"),
+]
+```
+
+### Step 3. Update the index view to use a template
+
+Instead of hardcoding the HTML in the views, we will use Django's template system. Create a folder called `templates` inside the `polls` directory and another folder inside it called `polls`. Then, create a file named `index.html` inside this folder with the following content:
+
+```html
+{% if latest_question_list %}
+    <ul>
+    {% for question in latest_question_list %}
+        <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
+```
+
+Update the `index` view in `polls/views.py` to use this template:
+
+```python
+from django.shortcuts import render
+from .models import Question
+
+def index(request):
+    latest_question_list = Question.objects.order_by("-pub_date")[:5]
+    context = {"latest_question_list": latest_question_list}
+    return render(request, "polls/index.html", context)
+```
+
+### Step 4. Rendering the views in the browser
+
+Once the templates and views are updated, run the development server again and access `http://127.0.0.1:8000/polls/`. The list of questions should now be displayed as links. When you click on a question, it will take you to the detail page of that specific question (though it still returns plain text at this point).
+
+Here's a preview of what the page should look like after completing Part 3:
+![My Result in Part3](./__ProcessImage/Part3Result.png)
+
+### Summary:
+
+In this part, we learned how to:
+- Add more views to display specific details about poll questions.
+- Use the template system to render data dynamically in the browser.
+- Organize URL patterns to match different views.
+
+By now, we should be able to navigate through the list of questions and view each one’s details.
