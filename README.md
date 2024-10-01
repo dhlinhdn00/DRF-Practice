@@ -1,5 +1,5 @@
 
-# Lab_1 in Django Tutorials: Writing my first Django - DRF Course - Hoai Linh 20PFIEV3 - 123200107
+# Lab_1 in Django Tutorials: Writing my first Django
 
 ## Part_1: Requests and responses
 
