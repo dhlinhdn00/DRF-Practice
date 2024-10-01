@@ -70,7 +70,7 @@ Ok, we will talk about each file:
   ```
 
 - Result in the browser: Access `http://127.0.0.1:8000/`.
-- ![My Result in Step2](./__ProcessImage/Step2.png)
+- ![My Result in Step2](./__ProcessImage/Part1Step2.png)
 - And my result in Terminal:
 ```plaintext
     Watching for file changes with StatReloader
@@ -176,9 +176,139 @@ polls/
 
 - Access `http://localhost:8000/polls/` to see the result. Be careful not to confuse this with accessing just `http://localhost:8000/` :v.
 - The text “I'm Hoai Linh 20PFIEV3, now I'm at the polls index. I've finished Lab_1 For DRF!”, which I defined in the index view, should appear.
-- ![My Result in Step5](./__ProcessImage/Step5.png)
+- ![My Result in Step5](./__ProcessImage/Part1Step5.png)
 
 ---
 
 ### Summary:
 In this part of the tutorial, we created a basic Django project, set up a polls app, and configured views and URLs to display the index page.
+
+## Part_2
+
+This tutorial begins where Part 1 left off. We’ll set up the database, create your first model, and get a quick introduction to Django’s automatically-generated admin site.
+
+### Step 1: Set up the Database
+
+- By default, Django uses SQLite. In this project, we will use the default configuration.
+- Open `LinhSite/settings.py` and check the **DATABASES** section.
+- Set **TIME_ZONE** to your time zone:
+  ```python
+  TIME_ZONE = 'Asia/Ho_Chi_Minh'
+  ```
+
+- Then, run the command to apply migrations for built-in apps:
+  ```bash
+  python manage.py migrate
+  ```
+
+---
+
+### Step 2: Create Models
+
+- Now let’s define the models in `polls/models.py`.
+
+- Open `polls/models.py` and define the models `Question` and `Choice` like this:
+  ```python
+  from django.db import models
+
+  class Question(models.Model):
+      question_text = models.CharField(max_length=200)
+      pub_date = models.DateTimeField('date published')
+
+  class Choice(models.Model):
+      question = models.ForeignKey(Question, on_delete=models.CASCADE)
+      choice_text = models.CharField(max_length=200)
+      votes = models.IntegerField(default=0)
+  ```
+  
+#### Knowledge:
+- Each field in a model is represented by a class variable, and each field maps to a column in the database.
+
+---
+
+### Step 3: Activate the Models
+
+- To activate the `polls` app in your project, you need to include it in `LinhSite/settings.py`.
+- Open `LinhSite/settings.py` and add the `PollsConfig` class to the **INSTALLED_APPS** list:
+  ```python
+  INSTALLED_APPS = [
+      'polls.apps.PollsConfig',
+      'django.contrib.admin',
+      'django.contrib.auth',
+      'django.contrib.contenttypes',
+      'django.contrib.sessions',
+      'django.contrib.messages',
+      'django.contrib.staticfiles',
+  ]
+  ```
+
+---
+
+### Step 4: Create Migrations
+
+- Run the command to create migrations for the `polls` app:
+  ```bash
+  python manage.py makemigrations polls
+  ```
+
+- Then, run the migration command to apply the changes:
+  ```bash
+  python manage.py migrate
+  ```
+
+- You can also check the generated SQL using the following command:
+  ```bash
+  python manage.py sqlmigrate polls 0001
+  ```
+
+---
+
+### Step 5: Create a Superuser
+
+- Run the following command to create a superuser for the Django admin site:
+  ```bash
+  python manage.py createsuperuser
+  ```
+- I entered the following details:
+  - Username: `hoailinh`
+  - Email: `daohoailinhdn00@gmail.com`
+  - Password: `meow@2024`
+
+- After creating the superuser, you should see the following message:
+  ```plaintext
+  Superuser created successfully.
+  ```
+
+---
+
+### Step 6: Activate the Admin Interface for Models
+
+- To make the `Question` model editable in the admin site, register it in `polls/admin.py`.
+
+- Open `polls/admin.py` and add the following code:
+  ```python
+  from django.contrib import admin
+  from .models import Question
+
+  admin.site.register(Question)
+  ```
+
+---
+
+### Step 7: Run the Development Server
+
+- Finally, run the development server using:
+  ```bash
+  python manage.py runserver
+  ```
+
+- Open your browser and navigate to `http://127.0.0.1:8000/admin/`.
+- Log in using the superuser credentials (`hoailinh`, `meow@2024`), and you will see the `Question` model registered in the admin site.
+
+- Here’s the result in my browser:
+- ![My Result in Part 2](./__ProcessImage/Part2Result.png)
+
+---
+
+### Summary:
+In Part 2, we set up the database, created the models, activated them, and registered them in the Django admin site. We also learned how to create migrations and run them to apply model changes.
