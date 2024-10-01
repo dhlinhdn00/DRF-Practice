@@ -1,11 +1,7 @@
 
 # Lab_1 in Django Tutorials: Writing my first Django - DRF Course - Hoai Linh 20PFIEV3 - 123200107
 
-## Link of Tutorials:
-
-https://docs.djangoproject.com/en/5.1/intro
-
-## Part_1
+## Part_1: Requests and responses
 
 Consist of two parts:
 - A public site that lets people view polls and vote in them.
@@ -187,7 +183,7 @@ polls/
 ### Summary:
 In this part of the tutorial, we created a basic Django project, set up a polls app, and configured views and URLs to display the index page.
 
-## Part_2
+## Part_2: Models and the admin site
 
 This tutorial begins where Part 1 left off. We’ll set up the database, create your first model, and get a quick introduction to Django’s automatically-generated admin site.
 
@@ -317,7 +313,7 @@ This tutorial begins where Part 1 left off. We’ll set up the database, create 
 ### Summary:
 In Part 2, we set up the database, created the models, activated them, and registered them in the Django admin site. We also learned how to create migrations and run them to apply model changes.
 
-## Part_3
+## Part_3: Views and templates
 
 In this part, we are extending the polls app by adding more views and using Django's template system to render the data in a more structured way.
 
@@ -400,7 +396,7 @@ In this part, we learned how to:
 
 By now, we should be able to navigate through the list of questions and view each one’s details.
 
-## Part_4
+## Part_4: Forms and generic views
 
 In this part, we will process form submissions and utilize Django’s generic views for better code efficiency.
 
@@ -564,7 +560,7 @@ python manage.py runserver
 
 Now we processed form data and introduced generic views to make our Django app more efficient.
 
-## Part 5
+## Part 5: Testing
 
 In this part, we will build automated tests for the web-poll application we've created in the previous parts. We'll start by identifying a bug in our app and create automated tests to ensure that this bug (and others) don't affect the functionality of our app in the future.
 
@@ -822,7 +818,7 @@ Destroying test database for alias 'default'...
 
 In this part of the tutorial, we learned how to write tests for our Django application, identify bugs, and fix them through test-driven development. We also ensured that our app displays only the relevant questions by filtering out future questions.
 
-## Part_6
+## Part_6: Static files
 
 In this part, we will learn how to add static files (like CSS and images) to the polls app to customize the look and feel.
 
@@ -919,7 +915,7 @@ In this part of the tutorial, you learned how to add static files to your Django
 This concludes **Part 6** of the Django tutorial.
 
 
-## Part 7
+## Part 7: Customizing the admin site
 
 ### Step 1: Customizing Admin Forms
 
@@ -1094,3 +1090,120 @@ The final customized admin should look like the image below:
 ### Summary
 
 In Part 7, we customized the Django Admin interface by adjusting form layouts with QuestionAdmin and fieldsets, adding related Choice objects directly on the Question admin page using inlines, and enhancing the admin change list with list_display, list_filter, and search_fields for better usability. We also customized the admin's look and feel by overriding templates and modifying the branding. These changes improved the efficiency and appearance of the admin interface for managing models.
+
+## Part_8: Adding Third-Party Packages
+
+In this part, we’ll explore how to integrate a popular third-party package into your Django project. One of the most common packages used is **Django Debug Toolbar**, which helps developers debug their applications more efficiently.
+
+---
+
+### Step 1: Install the Django Debug Toolbar
+
+Make sure your virtual environment is activated. Then install the **Django Debug Toolbar** package:
+
+```bash
+pip install django-debug-toolbar
+```
+
+This will add the toolbar to your project’s dependencies. 
+
+---
+
+### Step 2: Add `debug_toolbar` to your INSTALLED_APPS
+
+To integrate the toolbar into your Django project, you need to modify your `settings.py` file. Add `debug_toolbar` to the `INSTALLED_APPS` list:
+
+```python
+# LinhSite/settings.py
+
+INSTALLED_APPS = [
+    ...
+    'debug_toolbar',
+]
+```
+
+---
+
+### Step 3: Modify Middleware
+
+In the same `settings.py` file, add the Debug Toolbar middleware after Django’s Security Middleware:
+
+```python
+# LinhSite/settings.py
+
+MIDDLEWARE = [
+    ...
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    ...
+]
+```
+
+This will ensure that the debug toolbar is loaded and available during development.
+
+---
+
+### Step 4: Update the URL Configuration
+
+To display the debug toolbar in the browser, you’ll need to add it to your project’s `urls.py` file. Add the following import and include the toolbar URLs:
+
+```python
+# LinhSite/urls.py
+
+from django.conf import settings
+from django.urls import include, path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    ...
+]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
+```
+
+Now, the toolbar will be displayed only when `DEBUG=True` in your development environment.
+
+---
+
+### Step 5: Configure Internal IPs
+
+Django Debug Toolbar only shows up for specific IP addresses. In the `settings.py`, add your local IP to the list of `INTERNAL_IPs`:
+
+```python
+# LinhSite/settings.py
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+```
+
+If you’re working in a different environment (e.g., Docker or VMs), make sure to set the IP address accordingly.
+
+---
+
+### Step 6: Verify the Installation
+
+Now, start the server and navigate to your admin page (`http://127.0.0.1:8000/admin/`). You should see the Django Debug Toolbar as a floating bar on the right-hand side of the page. Clicking on it will reveal useful panels with detailed information about the request, SQL queries, cache usage, and more.
+
+```bash
+python manage.py runserver
+```
+
+![Part8Result.png](./__ProcessImage/Part8Result.png)
+
+If everything is configured correctly, you’ll now have a powerful debugging tool installed on your Django site.
+
+---
+
+### Additional Tips
+
+- If the toolbar doesn't show up, double-check the middleware order in `settings.py`, and make sure that `DEBUG` is set to `True`.
+- You can customize the panels shown by editing the `DEBUG_TOOLBAR_PANELS` setting in `settings.py`.
+- To disable the toolbar in production, simply set `DEBUG=False`.
+
+### Summary
+
+In Part 8, we installed a third-party package, Django Debug Toolbar, to enhance the debugging process. We configured the necessary settings, updated middleware, and verified that the toolbar was successfully integrated into our LinhSite project.
