@@ -134,7 +134,7 @@ polls/
       return HttpResponse("I'm Hoai Linh 20PFIEV3, now I'm at the polls index. I've finished Lab_1 For DRF!")
   ```
 
--This is the most basic view possible in Django. To access it in a browser, we need to map it to a URL. To do this, we need to define a URL configuration, or 'URLconf' for short. These URL configurations are defined inside each Django app, and they are Python files named `urls.py`.
+- This is the most basic view possible in Django. To access it in a browser, we need to map it to a URL. To do this, we need to define a URL configuration, or 'URLconf' for short. These URL configurations are defined inside each Django app, and they are Python files named `urls.py`.
 
 - To define a URLconf for the polls app, create a file `polls/urls.py` with the following content:
   ```python
@@ -162,15 +162,14 @@ polls/
  ```
   
 - The include() func allows referencing other URLconfs.
-  ```plaintext
-      The path("polls/", include("polls.urls")) tells Django: "Whenever the URL starts with polls/, look for more URL patterns in the polls app's urls.py file."
-    Inside the polls/urls.py, you can define the specific endpoints for the polls app (e.g., polls/vote, polls/results), and include() will forward the requests to those URLs.
-    When to use: when you want to include other URL patterns, but admin.site.urls is the only exxception to this
-  ```
-- The path() func expects at least 2 arguments: route and view. 
-  ```plaintext
-      For example, route: admin/ and poll/ are respect to apps. And view is the class or func handling request of URL that you defined in route.
-  ```
+  - The path("polls/", include("polls.urls")) tells Django: "Whenever the URL starts with polls/, look for more URL patterns in the polls app's urls.py file."
+  - Inside the polls/urls.py, you can define the specific endpoints for the polls app (e.g., polls/vote, polls/results), and include() will forward the requests to those URLs.
+  - When to use: when you want to include other URL patterns, but admin.site.urls is the only exxception to this
+
+- The path() func expects at least 2 arguments: route and view.
+  - For example, route: admin/ and poll/ are respect to apps. And view is the class or func handling request of URL that you defined in route.
+  
+  
 - All of the above processing has ensured we have wired an index view into the URLconf! Check it by command:
   ```bash
   python manage.py runserver
