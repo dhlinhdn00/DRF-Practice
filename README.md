@@ -1,6 +1,10 @@
 
 # Lab_1 in Django Tutorials: Writing my first Django - DRF Course - Hoai Linh 20PFIEV3 - 123200107
 
+## Link of Tutorials:
+
+https://docs.djangoproject.com/en/5.1/intro
+
 ## Part_1
 
 Consist of two parts:
@@ -559,3 +563,261 @@ python manage.py runserver
 ### Summary:
 
 Now we processed form data and introduced generic views to make our Django app more efficient.
+
+## Part 5
+
+In this part, we will build automated tests for the web-poll application we've created in the previous parts. We'll start by identifying a bug in our app and create automated tests to ensure that this bug (and others) don't affect the functionality of our app in the future.
+
+---
+
+### Step 1: Identifying the bug
+
+We identified that the `was_published_recently()` method for `Question` returns `True` for future dates, which is incorrect. Let's confirm this issue using the Django shell.
+
+#### Running the Django shell to check the bug:
+```bash
+$ python manage.py shell
+>>> import datetime
+>>> from django.utils import timezone
+>>> from polls.models import Question
+>>> # Create a Question with a pub_date 30 days in the future
+>>> future_question = Question(pub_date=timezone.now() + datetime.timedelta(days=30))
+>>> future_question.was_published_recently()
+True
+```
+
+This is a problem since future questions should not be considered "recently published."
+
+---
+
+### Step 2: Create a test to expose the bug
+
+Let's write a test that checks if the `was_published_recently()` method returns `False` for questions with future `pub_date`.
+
+#### Editing `polls/tests.py`:
+```python
+import datetime
+from django.test import TestCase
+from django.utils import timezone
+from polls.models import Question
+
+class QuestionModelTests(TestCase):
+    def test_was_published_recently_with_future_question(self):
+        '''
+        was_published_recently() returns False for questions whose pub_date
+        is in the future.
+        '''
+        time = timezone.now() + datetime.timedelta(days=30)
+        future_question = Question(pub_date=time)
+        self.assertIs(future_question.was_published_recently(), False)
+```
+
+---
+
+### Step 3: Run the test
+
+We run the test to check for failures, and as expected, the test fails, confirming that our function behaves incorrectly for future dates.
+
+#### Command:
+```bash
+$ python manage.py test polls
+```
+
+#### Output:
+```plaintext
+Found 1 test(s).
+Creating test database for alias 'default'...
+System check identified no issues (0 silenced).
+F
+======================================================================
+FAIL: test_was_published_recently_with_future_question (polls.tests.QuestionModelTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:/Works/Semester_9/DRF/DRF-Practice/Lab_1/LinhSite/polls/tests.py", line 17, in test_was_published_recently_with_future_question
+    self.assertIs(future_question.was_published_recently(), False)
+AssertionError: True is not False
+----------------------------------------------------------------------
+
+Ran 1 test in 0.001s
+
+FAILED (failures=1)
+Destroying test database for alias 'default'...
+```
+
+*Explanation:* The test correctly fails, indicating that the method is returning `True` for future questions.
+
+---
+
+### Step 4: Fix the bug
+
+Now, let's fix the `was_published_recently()` method in the `polls/models.py`.
+
+#### Editing `polls/models.py`:
+```python
+from django.utils import timezone
+
+class Question(models.Model):
+    # ...
+    def was_published_recently(self):
+        '''
+        Returns True if the question was published within the last day.
+        Returns False if the question's pub_date is in the future.
+        '''
+        now = timezone.now()
+        return now - datetime.timedelta(days=1) <= self.pub_date <= now
+```
+
+---
+
+### Step 5: Run the test again
+
+Let's re-run the test to see if the bug has been fixed.
+
+#### Command:
+```bash
+$ python manage.py test polls
+```
+
+#### Output:
+```plaintext
+Found 1 test(s).
+Creating test database for alias 'default'...
+System check identified no issues (0 silenced).
+.
+----------------------------------------------------------------------
+
+Ran 1 test in 0.001s
+
+OK
+Destroying test database for alias 'default'...
+```
+
+*Explanation:* The test now passes, confirming that our bug fix works as intended.
+
+---
+
+### Step 6: Writing additional tests
+
+Now that the bug has been fixed, let's add more tests to cover different scenarios, such as when the question's `pub_date` is in the past or within the last day.
+
+#### Adding more tests to `polls/tests.py`:
+```python
+def test_was_published_recently_with_old_question(self):
+    '''
+    was_published_recently() returns False for questions whose pub_date
+    is older than 1 day.
+    '''
+    time = timezone.now() - datetime.timedelta(days=1, seconds=1)
+    old_question = Question(pub_date=time)
+    self.assertIs(old_question.was_published_recently(), False)
+
+def test_was_published_recently_with_recent_question(self):
+    '''
+    was_published_recently() returns True for questions whose pub_date
+    is within the last day.
+    '''
+    time = timezone.now() - datetime.timedelta(hours=23, minutes=59, seconds=59)
+    recent_question = Question(pub_date=time)
+    self.assertIs(recent_question.was_published_recently(), True)
+```
+
+---
+
+### Step 7: Running all tests
+
+Finally, let's run all the tests to ensure everything works as expected.
+
+#### Command:
+```bash
+$ python manage.py test polls
+```
+
+#### Output:
+```plaintext
+Found 6 test(s).
+Creating test database for alias 'default'...
+System check identified no issues (0 silenced).
+F.....
+======================================================================
+FAIL: test_future_question (polls.tests.QuestionIndexViewTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:/Works/Semester_9/DRF/DRF-Practice/Lab_1/LinhSite/polls/tests.py", line 60, in test_future_question
+    self.assertContains(response, "No polls are available.")
+AssertionError: False is not true : Couldn't find 'No polls are available.' in the following response
+b'
+    <ul>
+    
+        
+        
+        <li><a href="/polls/1/">Future question.</a></li>
+
+    
+    </ul>
+
+'
+
+----------------------------------------------------------------------
+
+Ran 6 tests in 0.069s
+
+FAILED (failures=1)
+Destroying test database for alias 'default'...
+```
+
+*Explanation:* The test failed because a future question was displayed, which should not have happened. We need to adjust our `get_queryset()` method in the view.
+
+---
+
+### Step 8: Fixing the view
+
+Let's fix the `get_queryset()` method to ensure future questions are not displayed on the index page.
+
+#### Editing `polls/views.py`:
+```python
+from django.utils import timezone
+
+class IndexView(generic.ListView):
+    template_name = "polls/index.html"
+    context_object_name = "latest_question_list"
+
+    def get_queryset(self):
+        '''
+        Return the last five published questions (not including those set to be
+        published in the future).
+        '''
+        return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
+```
+
+---
+
+### Step 9: Running the tests again
+
+After fixing the view, we run the tests again.
+
+#### Command:
+```bash
+$ python manage.py test polls
+```
+
+#### Output:
+```plaintext
+Found 6 test(s).
+Creating test database for alias 'default'...
+System check identified no issues (0 silenced).
+......
+----------------------------------------------------------------------
+
+Ran 6 tests in 0.068s
+
+OK
+Destroying test database for alias 'default'...
+```
+
+*Explanation:* All tests passed successfully, which confirms that our view logic works correctly now.
+
+---
+
+### Summary
+
+In this part of the tutorial, we learned how to write tests for our Django application, identify bugs, and fix them through test-driven development. We also ensured that our app displays only the relevant questions by filtering out future questions.
