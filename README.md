@@ -308,7 +308,6 @@ This tutorial begins where Part 1 left off. We’ll set up the database, create 
 - Here’s the result in my browser and add new question:
 - ![My Result in Part 2](./__ProcessImage/Part2Result.png)
 - ![My Result in Part 2](./__ProcessImage/Part2AddNewQuestion.png)
-
 ---
 
 ### Summary:
