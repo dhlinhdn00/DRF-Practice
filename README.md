@@ -150,7 +150,7 @@ polls/
 
 ### Step 5. Configure the global URLconf in the LinhSite project to include the URLconf defined in poll urls
 
-- To do this, add an import for django.urls.include in `LinhSite/urls.py` and insert an include() in the urlpatterns list, so we have:
+- To do this, add an import for `django.urls.include` in `LinhSite/urls.py` and insert an `include()` in the `urlpatterns` list, so we have:
   ```python
   from django.contrib import admin
   from django.urls import include, path
@@ -159,22 +159,23 @@ polls/
       path("polls/", include("polls.urls")),
       path("admin/", admin.site.urls),
   ]
- ```
-- The include() func allows referencing other URLconfs.
-  - The path("polls/", include("polls.urls")) tells Django: "Whenever the URL starts with polls/, look for more URL patterns in the polls app's urls.py file."
-  - Inside the polls/urls.py, you can define the specific endpoints for the polls app (e.g., polls/vote, polls/results), and include() will forward the requests to those URLs.
-  - When to use: when you want to include other URL patterns, but admin.site.urls is the only exxception to this
-
-- The path() func expects at least 2 arguments: route and view.
-  - For example, route: admin/ and poll/ are respect to apps. And view is the class or func handling request of URL that you defined in route.
+  ```
   
-- All of the above processing has ensured we have wired an index view into the URLconf! Check it by command:
+- The `include()` function allows referencing other URLconfs.
+  - The `path("polls/", include("polls.urls"))` tells Django: "Whenever the URL starts with `polls/`, look for more URL patterns in the `polls` app's `urls.py` file."
+  - Inside the `polls/urls.py`, you can define the specific endpoints for the polls app (e.g., `polls/vote`, `polls/results`), and `include()` will forward the requests to those URLs.
+  - **When to use**: When you want to include other URL patterns, but `admin.site.urls` is the only exception to this.
+
+- The `path()` function expects at least two arguments: `route` and `view`.
+  - For example, `route: admin/` and `poll/` correspond to different apps, and `view` is the class or function handling the request for the URL that you defined in the `route`.
+  
+- All of the above processing has ensured that we have wired an index view into the URLconf! Check it by running the command:
   ```bash
   python manage.py runserver
   ```
 
-- Access `http://localhost:8000/polls/` to see the result. Be careful confused because I used to access just only `http://localhost:8000/` :v.
-- The text “I'm Hoai Linh 20PFIEV3, now I'm at the polls index. I've finished Lab_1 For DRF!”, which I defined in the index view.
+- Access `http://localhost:8000/polls/` to see the result. Be careful not to confuse this with accessing just `http://localhost:8000/` :v.
+- The text “I'm Hoai Linh 20PFIEV3, now I'm at the polls index. I've finished Lab_1 For DRF!”, which I defined in the index view, should appear.
 - ![My Result in Step5](./__ProcessImage/Step5.png)
 
 ---
