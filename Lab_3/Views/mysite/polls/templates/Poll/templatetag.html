@@ -1,0 +1,15 @@
+The {% templatetag openblock %} characters open a block.
+
+{% url 'some-url-name' v1 v2 %}
+
+{% url 'some-url-name' arg1=v1 arg2=v2 %}
+
+{% url 'app-views-client' client.id %}
+{% url 'some-url-name' arg arg2 as the_url %}
+
+<a href="{{ the_url }}">I'm linking to {{ the_url }}</a>
+{% url 'some-url-name' as the_url %}
+{% if the_url %}
+  <a href="{{ the_url }}">Link to optional stuff</a>
+{% endif %}
+
